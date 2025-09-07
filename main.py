@@ -1,9 +1,3 @@
-"""
-Simple YOLO v8 Object Detection with IP Camera
-Author: Your Name
-Date: September 2025
-"""
-
 import cv2
 import argparse
 import time
@@ -13,7 +7,6 @@ from config import DEFAULT_IP, MODEL_NAME, CONFIDENCE_THRESHOLD
 
 class SimpleYOLODetector:
     def __init__(self, model_name=MODEL_NAME, conf_threshold=CONFIDENCE_THRESHOLD):
-        """Initialize YOLO v8 detector"""
         print(f"Loading YOLO v8 model: {model_name}")
         self.model = YOLO(model_name)
         self.conf_threshold = conf_threshold
@@ -21,27 +14,21 @@ class SimpleYOLODetector:
         self.start_time = time.time()
     
     def detect_objects(self, frame):
-        """Detect objects in frame using YOLO v8"""
         results = self.model(frame, conf=self.conf_threshold, verbose=False)
-        return results[0]  # Get first result
+        return results[0]
     
     def draw_detections(self, frame, result):
-        """Draw bounding boxes and labels on frame"""
         boxes = result.boxes
         if boxes is not None:
             for box in boxes:
-                # Get box coordinates
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
                 conf = box.conf[0]
                 cls = int(box.cls[0])
                 
-                # Get class name
                 class_name = self.model.names[cls]
                 
-                # Draw bounding box
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 
-                # Draw label
                 label = f"{class_name}: {conf:.2f}"
                 label_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)[0]
                 cv2.rectangle(frame, (x1, y1 - label_size[1] - 10), 
@@ -52,7 +39,6 @@ class SimpleYOLODetector:
         return frame
     
     def calculate_fps(self):
-        """Calculate and return FPS"""
         self.fps_counter += 1
         elapsed_time = time.time() - self.start_time
         if elapsed_time > 1.0:
@@ -64,7 +50,6 @@ class SimpleYOLODetector:
 
 
 def connect_to_camera(ip_url):
-    """Connect to IP camera"""
     print(f"Connecting to IP camera: {ip_url}")
     stream_url = f"{ip_url}/video"
     cap = cv2.VideoCapture(stream_url)
@@ -89,10 +74,8 @@ def main():
                        help=f'Confidence threshold (default: {CONFIDENCE_THRESHOLD})')
     args = parser.parse_args()
     
-    # Initialize detector
     detector = SimpleYOLODetector(conf_threshold=args.conf)
     
-    # Connect to camera
     cap = connect_to_camera(args.ip)
     if cap is None:
         return
@@ -108,22 +91,17 @@ def main():
                 print("❌ Failed to read frame")
                 break
             
-            # Detect objects
             result = detector.detect_objects(frame)
             
-            # Draw detections
             frame = detector.draw_detections(frame, result)
             
-            # Calculate and display FPS
             fps = detector.calculate_fps()
             if fps > 0:
                 cv2.putText(frame, f"FPS: {fps:.1f}", (10, 30), 
                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
             
-            # Display frame
             cv2.imshow('YOLO v8 Object Detection', frame)
             
-            # Exit on 'q' key
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
                 

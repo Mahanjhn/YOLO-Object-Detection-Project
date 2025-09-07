@@ -1,22 +1,15 @@
 #!/usr/bin/env python3
-"""
-Setup script for YOLO v8 Object Detection Project
-Installs all required packages
-"""
 
 import subprocess
 import sys
 
 def install_packages():
-    """Install required packages"""
     print("📦 Installing required packages...")
     print("This may take a few minutes...")
     
     try:
-        # Upgrade pip first
         subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], check=True)
         
-        # Install requirements
         subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
         
         print("\n✅ Installation completed successfully!")

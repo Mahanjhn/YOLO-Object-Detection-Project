@@ -1,7 +1,3 @@
-"""
-Simple IP Camera Connection Test
-"""
-
 import cv2
 import requests
 import argparse
@@ -9,11 +5,9 @@ from config import DEFAULT_IP
 
 
 def test_ip_camera(ip_url):
-    """Test IP camera connection and display video stream"""
     print(f"🔍 Testing IP camera: {ip_url}")
     print("-" * 50)
     
-    # Test basic connection
     try:
         response = requests.get(ip_url, timeout=5)
         print(f"✅ Basic connection: Status {response.status_code}")
@@ -21,7 +15,6 @@ def test_ip_camera(ip_url):
         print(f"❌ Connection failed: {e}")
         return False
     
-    # Test video stream
     stream_url = f"{ip_url}/video"
     print(f"🎥 Testing video stream: {stream_url}")
     
@@ -39,7 +32,6 @@ def test_ip_camera(ip_url):
             print("❌ Failed to read frame")
             break
         
-        # Display frame info
         height, width = frame.shape[:2]
         cv2.putText(frame, f"Resolution: {width}x{height}", (10, 30), 
                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
